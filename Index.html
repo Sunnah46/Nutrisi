@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Berat Badan</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 1em;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #e74c3c;
+      box-shadow: 0 0 8px rgba(231, 76, 60, 0.3);
+    }
+    button {
+      background: linear-gradient(45deg, #e74c3c, #c0392b);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      width: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffffff, #ecf0f1);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: none;
+      color: #2c3e50;
+    }
+    #result h3 {
+      color: #e74c3c;
+      margin-bottom: 15px;
+    }
+    #result p {
+      margin: 10px 0;
+      line-height: 1.6;
+    }
+    .error {
+      color: #c0392b;
+      font-size: 0.9em;
+      margin-top: 10px;
+      text-align: center;
+    }
+    @media (max-width: 500px) {
+      body {
+        margin: 10px;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Kalkulator Berat Badan</h1>
+  <div class="form-group">
+    <label for="weight">Berat Badan (kg):</label>
+    <input type="number" id="weight" step="0.1" min="0" required>
+  </div>
+  <div class="form-group">
+    <label for="height">Tinggi Badan (cm):</label>
+    <input type="number" id="height" step="0.1" min="0" required>
+  </div>
+  <div class="form-group">
+    <label for="age">Usia (tahun):</label>
+    <input type="number" id="age" min="1" required>
+  </div>
+  <div class="form-group">
+    <label for="gender">Jenis Kelamin:</label>
+    <select id="gender" required>
+      <option value="">Pilih Jenis Kelamin</option>
+      <option value="pria">Pria</option>
+      <option value="wanita">Wanita</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="activity">Tingkat Aktivitas:</label>
+    <select id="activity" required>
+      <option value="">Pilih Tingkat Aktivitas</option>
+      <option value="1.2">Sangat Rendah (Sedentari)</option>
+      <option value="1.375">Rendah (Aktivitas Ringan)</option>
+      <option value="1.55">Sedang (Aktivitas Sedang)</option>
+      <option value="1.725">Tinggi (Aktivitas Berat)</option>
+      <option value="1.9">Sangat Tinggi (Atlet)</option>
+    </select>
+  </div>
+  <button onclick="calculate()">Hitung Sekarang</button>
+  <div id="result"></div>
+  <div id="error" class="error"></div>
+
+  <script>
+    function calculate() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
+      const activity = parseFloat(document.getElementById('activity').value);
+      const resultDiv = document.getElementById('result');
+      const errorDiv = document.getElementById('error');
+
+      // Reset error and result
+      errorDiv.textContent = '';
+      resultDiv.style.display = 'none';
+
+      // Validate inputs
+      if (!weight || weight <= 0) {
+        errorDiv.textContent = 'Masukkan berat badan yang valid (lebih dari 0 kg).';
+        return;
+      }
+      if (!height || height <= 0) {
+        errorDiv.textContent = 'Masukkan tinggi badan yang valid (lebih dari 0 cm).';
+        return;
+      }
+      if (!age || age <= 0 || age > 100) {
+        errorDiv.textContent = 'Masukkan usia yang valid (1-100 tahun).';
+        return;
+      }
+      if (!gender) {
+        errorDiv.textContent = 'Pilih jenis kelamin.';
+        return;
+      }
+      if (!activity) {
+        errorDiv.textContent = 'Pilih tingkat aktivitas.';
+        return;
+      }
+
+      // Calculate BMI
+      const heightInMeters = height / 100;
+      const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+      let bmiCategory = '';
+      if (bmi < 18.5) {
+        bmiCategory = 'Kurang berat badan';
+      } else if (bmi >= 18.5 && bmi <= 24.9) {
+        bmiCategory = 'Normal';
+      } else if (bmi >= 25 && bmi <= 29.9) {
+        bmiCategory = 'Berat badan berlebih';
+      } else {
+        bmiCategory = 'Obesitas';
+      }
+
+      // Calculate BMR (Harris-Benedict)
+      let bmr;
+      if (gender === 'pria') {
+        bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+      } else {
+        bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+      }
+
+      // Calculate daily calorie needs
+      const calories = Math.round(bmr * activity);
+
+      // Suggestion based on BMI
+      let suggestion = '';
+      if (bmi < 18.5) {
+        suggestion = 'Berat badan Anda di bawah normal. Pertimbangkan untuk berkonsultasi dengan dokter gizi untuk meningkatkan asupan nutrisi.';
+      } else if (bmi >= 18.5 && bmi <= 24.9) {
+        suggestion = 'Berat badan Anda normal. Pertahankan pola makan seimbang dan gaya hidup aktif!';
+      } else if (bmi >= 25 && bmi <= 29.9) {
+        suggestion = 'Berat badan Anda berlebih. Pertimbangkan pola makan sehat dan olahraga teratur.';
+      } else {
+        suggestion = 'Berat badan Anda masuk kategori obesitas. Konsultasikan dengan dokter untuk rencana penurunan berat badan yang sehat.';
+      }
+
+      // Display result
+      resultDiv.innerHTML = `
+        <h3>Hasil Perhitungan</h3>
+        <p><strong>Indeks Massa Tubuh (IMT):</strong> ${bmi}</p>
+        <p><strong>Kategori:</strong> ${bmiCategory}</p>
+        <p><strong>Kebutuhan Kalori Harian:</strong> ${calories} kkal</p>
+        <p><strong>Saran:</strong> ${suggestion}</p>
+        <p><em>Catatan: Hasil ini hanya estimasi. Konsultasikan dengan profesional kesehatan untuk saran medis.</em></p>
+      `;
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
